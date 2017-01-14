@@ -1,0 +1,9 @@
+package ${exceptionPackage};
+
+/**
+ * ${tableComments}(${tableName})
+ * @author auto bin.yin $create_date
+ */
+public class ${exceptionClassName}Code {
+
+}

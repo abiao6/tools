@@ -1,0 +1,41 @@
+package ${entityPackage};
+
+#if($logData==1)
+import ${prefixPackage}.annotation.LogRequired;
+#end
+import ${prefixPackage}.core.AbstractEntity;
+#foreach($column in $columnList)
+#if($stringUtils.needImport($column.javaType)==1)
+import $column.javaType;
+#end
+#end
+
+/**
+ * ${tableComments}(${tableName})
+ * @author auto bin.yin $create_date
+ */
+#if($logData==1)
+@LogRequired
+#end
+public class $className extends AbstractEntity {
+	private static final long serialVersionUID = ${serialVersionUID}L;
+
+#foreach($column in $columnList)
+#if(!$ignoreColumns.contains($column.name))
+#set($fieldType=$stringUtils.abbreviateJavaType($column.javaType))
+	private $fieldType $column.name; //$column.comment
+#end
+#end
+#foreach($column in $columnList)
+#if(!$ignoreColumns.contains($column.name))
+#set($fieldType=$stringUtils.abbreviateJavaType($column.javaType))
+
+	public $fieldType $stringUtils.getMethodName($column.name)() {
+		return this.$column.name;
+	}
+	public void $stringUtils.setMethodName($column.name)($fieldType $column.name) {
+		this.$column.name = $column.name;
+	}
+#end
+#end
+}

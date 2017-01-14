@@ -1,0 +1,65 @@
+package ${modulePackage};
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import ${prefixPackage}.page.PageParam;
+
+import ${entityClass};
+import ${serviceClass};
+
+/**
+ * ${tableComments}(${tableName})
+ * @author auto bin.yin $create_date
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:application.xml" })
+@Rollback(value=false)
+public class Test${serviceClassName} {
+	private static final Logger log = LoggerFactory.getLogger(Test${serviceClassName}.class);
+
+	@Autowired
+	private ${serviceClassName} ${lowerServiceClassName};
+
+	@Test
+	public void test() {
+		${className} entity = new ${className}();
+#foreach($column in $columnList)
+#if($column.name!='id')
+#set($fieldType=$stringUtils.abbreviateJavaType($column.javaType))
+		entity.$stringUtils.setMethodName($column.name)(#if($fieldType=="Integer")0#elseif($fieldType=="Long")0L#else""#end);//$column.comment
+#end
+#end
+		log.debug("before insert...");
+		${className} result = ${lowerServiceClassName}.create(entity);
+		
+		log.debug("before getById...");
+		${lowerServiceClassName}.findById(result.getId());
+		
+		log.debug("before update...");
+		${lowerServiceClassName}.modify(result);
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+#foreach($column in $pkColumnList)
+		param.put("$column.name", 1);
+#end
+		
+		log.debug("before queryBy...");
+		${lowerServiceClassName}.queryBy(param);
+		
+		PageParam pageParam = new PageParam(1, 15);
+		log.debug("before queryPage...");
+		${lowerServiceClassName}.queryPage(pageParam, param);
+		
+		System.out.println("------ success ------");
+	}
+}

@@ -1,0 +1,86 @@
+package ${facadePackage};
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.dubbo.rpc.protocol.rest.support.ContentType;
+import com.alibaba.fastjson.JSON;
+import com.tjcloud.exception.BusinessException;
+import com.tjcloud.page.Pagination;
+import com.tjcloud.response.ResponseResult;
+import ${entityClass};
+import ${facadeClass};
+import ${serviceClass};
+import com.tjcloud.utils.ValidateUtils;
+import com.tjcloud.web.rs.AbstractFacade;
+import com.tjcloud.web.rs.utils.RSUriUtils;
+
+@Path("${tabName}s")
+@Service("${lowerFacadeClassName}")
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_XML })
+@Produces({ ContentType.APPLICATION_JSON_UTF_8, ContentType.TEXT_XML_UTF_8 })
+public class ${facadeClassName}Impl extends AbstractFacade implements ${facadeClassName} {
+	private static final Logger logger = LoggerFactory.getLogger(${facadeClassName}Impl.class);
+
+	@Autowired
+	private ${serviceClassName} ${lowerServiceClassName};
+
+	@GET
+	@Consumes({ MediaType.TEXT_PLAIN })
+	public ResponseResult query(@Context UriInfo uriInfo) throws BusinessException {
+		Pagination<${className}> list = RSUriUtils.getPagination(uriInfo, ${lowerServiceClassName});
+		return ResponseResult.getResponse().setData(list);
+	}
+
+	@GET
+	@Path("{id : \\w+}")
+	public ResponseResult get(@PathParam("id") String id) throws BusinessException {
+		logger.debug("~~~~~ get param id = ({})", id);
+
+		${className} ${lowerClassName} = ${lowerServiceClassName}.get(id);
+
+		logger.debug("~~~~~ get result = {}, param id is ({})", JSON.toJSONString(${lowerClassName}), id);
+		return ResponseResult.getResponse().setData(${lowerClassName});
+	}
+
+	@POST
+	public ${className} create(${className} ${lowerClassName}) throws BusinessException {
+		logger.debug("~~~~~ post param = {}", JSON.toJSONString(${lowerClassName}));
+
+		ValidateUtils.notNull(${lowerClassName});
+		ValidateUtils.notEmpty(${lowerClassName}.getId());
+		${className} result = ${lowerServiceClassName}.create(${lowerClassName});
+		return ResponseResult.getResponse().setData(result);
+	}
+
+	@PUT
+	public ResponseResult modify(${className} ${lowerClassName}) throws BusinessException {
+		logger.debug("~~~~~ put param = {}", JSON.toJSONString(${lowerClassName}));
+
+		ValidateUtils.notNull(${lowerClassName});
+		ValidateUtils.notEmpty(${lowerClassName}.getId());
+		int rows = ${lowerServiceClassName}.modify(${lowerClassName});
+		return ResponseResult.getResponse().setData(rows);
+	}
+
+	@DELETE
+	@Path("{id : \\w+}")
+	public ResponseResult remove(@PathParam("id") String id) throws BusinessException {
+		logger.debug("~~~~~ delete param id = ({})", id);
+		return ResponseResult.getResponse();
+	}
+}

@@ -1,0 +1,19 @@
+package ${servicePackage};
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import ${prefixPackage}.data.mybatis.service.impl.AbstractIbatisServiceImpl;
+import ${daoClass};
+import ${entityClass};
+import ${serviceClass};
+
+@Service("${lowerServiceClassName}")
+public class ${serviceClassName}Impl extends AbstractIbatisServiceImpl<${className}, $pkType> implements ${serviceClassName} {
+	@Autowired
+	private ${daoClassName} ${lowerDaoClassName};
+
+	public ${daoClassName} getAbstractIBatisDao() {
+		return this.${lowerDaoClassName};
+	}
+}

@@ -1,0 +1,24 @@
+package ${facadePackage};
+
+import javax.ws.rs.core.UriInfo;
+
+import com.tjcloud.exception.BusinessException;
+import com.tjcloud.page.Pagination;
+import ${entityClass};
+
+/**
+ * ${tableComments}(${tableName})
+ * @author auto bin.yin $create_date
+ */
+public interface ${facadeClassName} {
+
+	${className} get(String id) throws BusinessException;
+
+	${className} create(${className} ${lowerClassName}) throws BusinessException;
+
+	int modify(${className} ${lowerClassName}) throws BusinessException;
+
+	Pagination<${className}> query(UriInfo uriInfo) throws BusinessException;
+
+	void remove(String id) throws BusinessException;
+}

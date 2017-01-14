@@ -1,0 +1,102 @@
+package ${servicePackage};
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import ${prefixPackage}.page.PageParam;
+import ${prefixPackage}.page.Pagination;
+
+import ${daoClass};
+import ${logDaoClass};
+import ${entityClass};
+import ${entityClass}Log;
+import ${exceptionClass};
+import ${serviceClass};
+
+@Service("${lowerServiceClassName}")
+public class ${serviceClassName}Impl implements ${serviceClassName}
+{
+	@Autowired
+	private ${daoClassName} ${lowerDaoClassName};
+	@Autowired
+	private ${logDaoClassName} ${lowerLogDaoClassName};
+
+	@Override
+	public ${className} create(${className} entity) throws ${exceptionClassName}
+	{
+		entity.setCreatedTime(System.currentTimeMillis());
+		entity.setUpdatedTime(System.currentTimeMillis());
+		entity.setLastAccess(System.currentTimeMillis());
+		${lowerDaoClassName}.insert(entity);
+
+		${className}Log log = new ${className}Log();
+		BeanUtils.copyProperties(entity, log);
+		log.setOldId(entity.getId());
+		log.setIsNew(true);
+		log.setLogTime(System.currentTimeMillis());
+		${lowerLogDaoClassName}.insert(log);
+
+		return entity;
+	}
+
+	@Override
+	public int modify(${className} entity) throws ${exceptionClassName}
+	{
+		${className} oldEntity = ${lowerDaoClassName}.getById(entity.getId());
+		${className}Log oldLog = new ${className}Log();
+		BeanUtils.copyProperties(oldEntity, oldLog);
+		oldLog.setOldId(oldEntity.getId());
+		oldLog.setIsNew(false);
+		oldLog.setLogTime(System.currentTimeMillis());
+		${lowerLogDaoClassName}.insert(oldLog);
+
+		entity.setUpdatedTime(System.currentTimeMillis());
+		entity.setLastAccess(System.currentTimeMillis());
+		int result = ${lowerDaoClassName}.update(entity);
+
+		${className}Log newLog = new ${className}Log();
+		BeanUtils.copyProperties(entity, newLog);
+		newLog.setOldId(entity.getId());
+		newLog.setIsNew(true);
+		newLog.setLogTime(System.currentTimeMillis());
+		${lowerLogDaoClassName}.insert(newLog);
+
+		return result;
+	}
+
+	@Override
+	public int removeById(Long id) throws ${exceptionClassName}
+	{
+		${className} oldEntity = ${lowerDaoClassName}.getById(id);
+		${className}Log oldLog = new ${className}Log();
+		BeanUtils.copyProperties(oldEntity, oldLog);
+		oldLog.setOldId(oldEntity.getId());
+		oldLog.setIsNew(false);
+		oldLog.setLogTime(System.currentTimeMillis());
+		${lowerLogDaoClassName}.insert(oldLog);
+
+		return ${lowerDaoClassName}.deleteById(id);
+	}
+
+	@Override
+	public ${className} findById(Long id) throws ${exceptionClassName}
+	{
+		return ${lowerDaoClassName}.getById(id);
+	}
+
+	@Override
+	public List<${className}> queryBy(Map<String, Object> param) throws ${exceptionClassName}
+	{
+		return ${lowerDaoClassName}.queryBy(param);
+	}
+
+	@Override
+	public Pagination<${className}> queryPage(PageParam pageParam, Map<String, Object> param) throws ${exceptionClassName}
+	{
+		return ${lowerDaoClassName}.queryPage(pageParam, param);
+	}
+}

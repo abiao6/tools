@@ -1,0 +1,12 @@
+package ${daoPackage};
+
+import ${prefixPackage}.data.mybatis.dao.AbstractIBatisDao;
+import ${entityClass};
+
+/**
+ * ${tableComments}(${tableName})
+ * @author auto bin.yin $create_date
+ */
+public interface ${daoClassName} extends AbstractIBatisDao<${className}, $pkType> {
+
+}

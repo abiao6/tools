@@ -1,0 +1,12 @@
+package ${servicePackage};
+
+import ${prefixPackage}.service.AbstractService;
+import ${entityClass};
+
+/**
+ * ${tableComments}(${tableName})
+ * @author auto bin.yin $create_date
+ */
+public interface ${serviceClassName} extends AbstractService<${className}, $pkType> {
+
+}

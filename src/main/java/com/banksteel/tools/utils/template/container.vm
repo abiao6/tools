@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://code.alibabatech.com/schema/dubbo
+		http://code.alibabatech.com/schema/dubbo/dubbo.xsd" default-autowire="byName">
+
+#foreach($model in $modelList)
+		clazz.add(${model.className}.class);
+#end
+
+#foreach($model in $modelList)
+		<typeAlias alias="${model.lowerClassName}" type="${model.entityClass}" />
+#end
+
+#foreach($model in $modelList)
+	<dubbo:service interface="${model.serviceClass}" ref="${model.lowerServiceClassName}" protocol="dubbo" version="3.0.0" />
+#end
+
+#foreach($model in $modelList)
+	<dubbo:service interface="${model.facadeClass}" ref="${model.lowerFacadeClassName}" protocol="rest" version="v3" />
+#end
+</beans>

@@ -1,0 +1,12 @@
+package ${daoPackage}.impl;
+
+import org.springframework.stereotype.Repository;
+
+import ${prefixPackage}.data.mybatis.dao.impl.AbstractIBatisDaoImpl;
+import ${daoClass};
+import ${entityClass};
+
+@Repository("${lowerDaoClassName}")
+public class ${daoClassName}Impl extends AbstractIBatisDaoImpl<${className}, $pkType> implements ${daoClassName} {
+
+}

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${daoImplClass}">
+	<sql id="t_${lowerClassName}">${tableName}</sql>
+#if($logData==1)
+	<sql id="t_${lowerClassName}Log">${tableName}_log</sql>
+#end
+
+	<insert id="insert" parameterType="${lowerClassName}">
+		<selectKey resultType="string" order="BEFORE" keyProperty="id">
+			SELECT REPLACE(UUID(), '-', '')
+		</selectKey>
+		INSERT INTO <include refid="t_${lowerClassName}" /> (ID,
+		<trim suffixOverrides=",">
+#foreach($column in $updateColumnList)
+			<if test="$column.name != null">
+				${column.name},
+			</if>
+#end
+			<include refid="com.tjcloud.data.mapper.inscolumn"/>
+		</trim>
+		) VALUES (#{id},
+		<trim suffixOverrides=",">
+#foreach($column in $updateColumnList)
+			<if test="$column.name != null">
+				#{$column.name},
+			</if>
+#end
+			<include refid="com.tjcloud.data.mapper.insparam"/>
+		</trim>
+		)
+	</insert>
+#if($logData==1)
+	<insert id="insert_log" parameterType="${lowerClassName}">
+		insert into <include refid="t_${lowerClassName}Log" />
+		select replace(uuid(), '-', '') as id,
+		       t.id as oldId,
+#foreach($column in $updateColumnList)
+		       ${column.name},
+#end
+		       <include refid="com.tjcloud.data.mapper.column"/>#{isNew} as isNew,
+		       #{logTime} as logTime
+		  from <include refid="t_${lowerClassName}" /> t
+		 where t.id = #{id}
+	</insert>
+#end
+
+	<update id="update" parameterType="${lowerClassName}">
+		UPDATE <include refid="t_${lowerClassName}" />
+		<trim prefix="SET" suffixOverrides=",">
+#foreach($column in $updateColumnList)
+			<if test="$column.name != null">
+				${column.name} = #{$column.name},
+			</if>
+#end
+			<include refid="com.tjcloud.data.mapper.update"/>
+		</trim>
+		 WHERE #foreach($column in $pkColumnList)
+#if($velocityCount>1),#end${column.name} = #{$column.name}
+#end
+	</update>
+
+	<update id="lock" parameterType="$pkType.toLowerCase()">
+		UPDATE <include refid="t_${lowerClassName}" />
+		   SET LOCKED = 1
+		 WHERE LOCKED = 0
+#foreach($column in $pkColumnList)
+		   #if($velocityCount>0)AND #end${column.name} = #{$column.name}
+#end
+	</update>
+
+	<update id="unlock" parameterType="$pkType.toLowerCase()">
+		UPDATE <include refid="t_${lowerClassName}" />
+		   SET LOCKED = 0
+		 WHERE LOCKED = 1
+#foreach($column in $pkColumnList)
+		   #if($velocityCount>0)AND #end${column.name} = #{$column.name}
+#end
+	</update>
+
+	<delete id="deleteById" parameterType="$pkType.toLowerCase()">
+		DELETE FROM <include refid="t_${lowerClassName}" />
+		 WHERE #foreach($column in $pkColumnList)
+${column.name} = #{$column.name}
+#end
+	</delete>
+
+	<select id="getById" parameterType="$pkType.toLowerCase()" resultType="${lowerClassName}">
+		SELECT * FROM <include refid="t_${lowerClassName}" />
+		 WHERE #foreach($column in $pkColumnList)
+${column.name} = #{$column.name}
+#end
+	</select>
+
+	<select id="listBy" parameterType="map" resultType="${lowerClassName}">
+		<include refid="listSQL" />
+	</select>
+
+	<select id="listPage" parameterType="map" resultType="${lowerClassName}">
+		<include refid="listSQL" />
+		<if test="pageFirst != null">
+			LIMIT #{pageFirst}, #{pageSize}
+		</if>
+	</select>
+
+	<select id="listPageCount" parameterType="map" resultType="long">
+		SELECT COUNT(1) FROM <include refid="t_${lowerClassName}" />
+		<where>
+			<include refid="condition_sql" />
+		</where>
+	</select>
+
+	<sql id="listSQL">
+		SELECT * FROM <include refid="t_${lowerClassName}" />
+		<where>
+			<include refid="condition_sql" />
+		</where>
+		ORDER BY id DESC
+	</sql>
+   
+	<sql id="condition_sql">
+		<trim prefixOverrides="AND | OR">
+#foreach($column in $pkColumnList)
+			<if test="$column.name != null">
+				AND ${column.name} = #{$column.name}
+			</if>
+#end
+#foreach($column in $updateColumnList)
+			<if test="$column.name != null">
+				AND ${column.name} = #{$column.name}
+			</if>
+#end
+			<include refid="com.tjcloud.data.mapper.condition"/>
+		</trim>
+	</sql>
+</mapper>

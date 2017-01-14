@@ -1,0 +1,31 @@
+package ${exceptionPackage};
+
+import ${prefixPackage}.core.ServiceException;
+
+/**
+ * ${tableComments}(${tableName})
+ * @author auto bin.yin $create_date
+ */
+public class ${exceptionClassName} extends ServiceException {
+	private static final long serialVersionUID = -${serialVersionUID}L;
+
+	public ${exceptionClassName}(Integer code) {
+		super(code);
+	}
+
+	public ${exceptionClassName}(Integer code, Object... args) {
+		super(code, args);
+	}
+
+	public ${exceptionClassName}(String message) {
+		super(message);
+	}
+
+	public ${exceptionClassName}(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public ${exceptionClassName}(Integer code, String message, Throwable cause) {
+		super(code, message, cause);
+	}
+}

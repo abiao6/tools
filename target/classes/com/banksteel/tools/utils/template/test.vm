@@ -1,0 +1,52 @@
+package ${modulePackage}.service;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.alibaba.fastjson.JSON;
+import ${prefixPackage}.page.PageParam;
+
+import ${entityClass};
+import ${serviceClass};
+
+/**
+ * ${tableComments}(${tableName})
+ * @author auto bin.yin $create_date
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:application.xml" })
+@Rollback(value=false)
+public class Test${serviceClassName} {
+	private static final Logger log = LoggerFactory.getLogger(Test${serviceClassName}.class);
+
+	@Autowired
+	private ${serviceClassName} ${lowerServiceClassName};
+
+	@Test
+	public void test() throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+#foreach($column in $pkColumnList)
+		param.put("$column.name", 1);
+#end
+		${className} entity = ${lowerServiceClassName}.get("1");
+		log.debug(JSON.toJSONString(entity));
+
+		log.debug("before findBy...");
+		${lowerServiceClassName}.findBy(param);
+
+		PageParam pageParam = new PageParam(1, 15);
+		log.debug("before queryPage...");
+		${lowerServiceClassName}.queryPage(pageParam, param);
+
+		System.out.println("------ success ------");
+	}
+}
